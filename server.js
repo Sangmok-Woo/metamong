@@ -1,17 +1,14 @@
 const express = require("express");
+const path = require("path");
 const app = express();
 const PORT = 3000;
 
-
 app.use(express.static("public"));
 
-const expressions = ["😊", "😳", "😈", "🥺", "😍", "😴", "🤪", "😎"];
-
-app.get("/metamong", (req,res) => {
-    const randomFace = expression[Math.floor(Math.random() * expressions.length)];
-    res.json({face: randomFace});
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 app.listen(PORT, () => {
-    console.log(`running good on localhost!`)
-})
+  console.log(`서버 실행 중! http://localhost:${PORT}`);
+});

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>3D 메타몽 테스트</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <script type="module">
+import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
+import { GLTFLoader } from 'https://unpkg.com/three@0.126.1/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js'; // ← 요거 추가
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// ✅ OrbitControls 세팅
+const controls = new OrbitControls(camera, renderer.domElement);
+
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(1, 2, 3);
+scene.add(light);
+const loader = new GLTFLoader();
+
+
+let metamongModel = null;
+let backgroundModel = null;
+
+loader.load('/forest_house.glb', (gltf) => {
+  metamongModel = gltf.scene;
+  metamongModel.scale.set(30, 30, 30);
+  metamongModel.position.set(0, -2, 0);
+  scene.add(metamongModel);
+});
+
+loader.load('/ship_in_a_bottle.glb', (gltf) => {
+  backgroundModel = gltf.scene;
+  backgroundModel.scale.set(15, 15, 15);
+  backgroundModel.position.set(10, 0, -10);
+  scene.add(backgroundModel);
+});
+
+camera.position.z = 5;
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  // 필요한 애만 회전시키자!
+  if (metamongModel) {
+    metamongModel.rotation.y += 0.005;
+  }
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+animate(); // 애니메이션 루프 시작!
+
+  </script>
+</body>
+</html>
